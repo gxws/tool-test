@@ -8,8 +8,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * 随机数字
+ * 
  * @author zhuwl120820@gxwsxx.com
- * @since
+ * @since 1.0
  */
 
 @Target(ElementType.FIELD)
@@ -18,4 +20,48 @@ import java.lang.annotation.Target;
 @Inherited
 public @interface RandomNumber {
 
+	/**
+	 * 随机数开始范围
+	 * 
+	 * @author zhuwl120820@gxwsxx.com
+	 * @return
+	 * @since 1.0
+	 */
+	public String start() default "";
+
+	/**
+	 * 随机数结束范围
+	 * 
+	 * @author zhuwl120820@gxwsxx.com
+	 * @return
+	 * @since 1.0
+	 */
+	public String end() default "";
+
+	/**
+	 * 偏移量参考
+	 * 
+	 * @author zhuwl120820@gxwsxx.com
+	 * @return
+	 * @since 1.0
+	 */
+	public String offSetCurrent() default "";
+
+	/**
+	 * 正向偏移量
+	 * 
+	 * @author zhuwl120820@gxwsxx.com
+	 * @return
+	 * @since 1.0
+	 */
+	public String offSetPositive() default "";
+
+	/**
+	 * 反向偏移量
+	 * 
+	 * @author zhuwl120820@gxwsxx.com
+	 * @return
+	 * @since 1.0
+	 */
+	public String offSetNegative() default "";
 }
