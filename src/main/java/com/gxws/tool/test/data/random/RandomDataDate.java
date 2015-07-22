@@ -1,7 +1,6 @@
 package com.gxws.tool.test.data.random;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -152,40 +151,4 @@ public class RandomDataDate {
 		return new Date(bdr.longValue());
 	}
 
-	@Deprecated
-	private Date randomDate1(Date start, Date end) {
-		long b = start.getTime();
-		long m = end.getTime() - b;
-		if (0 == m) {
-			return start;
-		}
-		String r = randomBase("", String.valueOf(m));
-		BigInteger bdr = new BigInteger(r);
-		BigInteger bdm = new BigInteger(String.valueOf(m));
-		m = bdr.mod(bdm).longValue();
-		return new Date(b + m);
-	}
-
-	/**
-	 * 生成随机值
-	 * 
-	 * @author zhuwl120820@gxwsxx.com
-	 * @param baseLong
-	 *            上级随机值
-	 * @param value
-	 *            随机值最小界限
-	 * @return 随机值
-	 * @since 1.0
-	 */
-	@Deprecated
-	private String randomBase(String baseLong, String value) {
-		BigDecimal bd = BigDecimal.valueOf(Math.random());
-		String r = bd.toString().split("\\.")[1];
-		r = baseLong + r;
-		if (r.length() > value.length()) {
-			return r;
-		} else {
-			return randomBase(r, value);
-		}
-	}
 }
