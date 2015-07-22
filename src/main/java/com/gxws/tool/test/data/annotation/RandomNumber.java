@@ -21,6 +21,15 @@ import java.lang.annotation.Target;
 public @interface RandomNumber {
 
 	/**
+	 * 随机数的小数位数
+	 * 
+	 * @author zhuwl120820@gxwsxx.com
+	 * @return
+	 * @since 1.0
+	 */
+	public int decimalScale() default 0;
+
+	/**
 	 * 随机数开始范围
 	 * 
 	 * @author zhuwl120820@gxwsxx.com
@@ -45,7 +54,7 @@ public @interface RandomNumber {
 	 * @return
 	 * @since 1.0
 	 */
-	public String offSetCurrent() default "";
+	public String offsetCurrent() default "0";
 
 	/**
 	 * 正向偏移量
@@ -54,7 +63,7 @@ public @interface RandomNumber {
 	 * @return
 	 * @since 1.0
 	 */
-	public String offSetPositive() default "";
+	public String offsetPositive() default "0";
 
 	/**
 	 * 反向偏移量
@@ -63,5 +72,5 @@ public @interface RandomNumber {
 	 * @return
 	 * @since 1.0
 	 */
-	public String offSetNegative() default "";
+	public String offsetNegative() default "0";
 }

@@ -7,8 +7,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import com.gxws.tool.test.data.annotation.RandomDate;
-
 /**
  * 生成随机日期
  * 
@@ -19,42 +17,38 @@ public class RandomDataDate {
 
 	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
-	/**
-	 * 获取Date类型的随机日期
-	 * 
-	 * @author zhuwl120820@gxwsxx.com
-	 * @return Date类型的随机日期
-	 * @since 1.0
-	 */
-	public Date getDate(RandomDate ann) {
-		if ("" != ann.start() && "" != ann.end()) {
-			try {
-				return startend(ann.start(), ann.end());
-			} catch (ParseException e) {
-				return new Date();
-			}
-		} else {
-			try {
-				return offset(ann.offsetCurrent(), ann.offsetBeforeOnly(),
-						ann.offsetAfterOnly(), ann.offsetYear(),
-						ann.offsetMonth(), ann.offsetDay(), ann.offsetHour(),
-						ann.offsetMinute(), ann.offsetSecond());
-			} catch (ParseException e) {
-				return new Date();
-			}
-		}
-	}
+	// /**
+	// * 获取Date类型的随机日期
+	// *
+	// * @author zhuwl120820@gxwsxx.com
+	// * @return Date类型的随机日期
+	// * @since 1.0
+	// */
+	// public Date getDate(RandomDate ann) {
+	// if (!"".equals(ann.start()) && !"".equals(ann.end())) {
+	// return startend(ann.start(), ann.end());
+	// } else {
+	// try {
+	// return offset(ann.offsetCurrent(), ann.offsetBeforeOnly(),
+	// ann.offsetAfterOnly(), ann.offsetYear(),
+	// ann.offsetMonth(), ann.offsetDay(), ann.offsetHour(),
+	// ann.offsetMinute(), ann.offsetSecond());
+	// } catch (ParseException e) {
+	// return new Date();
+	// }
+	// }
+	// }
 
-	/**
-	 * 获取String格式的随机日期
-	 * 
-	 * @author zhuwl120820@gxwsxx.com
-	 * @return String格式的随机日期
-	 * @since 1.0
-	 */
-	public String getString(RandomDate ann) {
-		return sdf.format(getDate(ann));
-	}
+	// /**
+	// * 获取String格式的随机日期
+	// *
+	// * @author zhuwl120820@gxwsxx.com
+	// * @return String格式的随机日期
+	// * @since 1.0
+	// */
+	// public String getString(RandomDate ann) {
+	// return sdf.format(getDate(ann));
+	// }
 
 	/**
 	 * start和end方式获取随机日期
@@ -65,13 +59,21 @@ public class RandomDataDate {
 	 * @param end
 	 *            截止日期
 	 * @return 随机日期
-	 * @throws ParseException
-	 *             日期格式错误
 	 * @since 1.0
 	 */
-	private Date startend(String start, String end) throws ParseException {
-		Date startDate = sdf.parse(start);
-		Date endDate = sdf.parse(end);
+	public Date startend(String start, String end) {
+		Date startDate;
+		try {
+			startDate = sdf.parse(start);
+		} catch (ParseException e) {
+			startDate = new Date();
+		}
+		Date endDate;
+		try {
+			endDate = sdf.parse(end);
+		} catch (ParseException e) {
+			endDate = new Date();
+		}
 		return randomDate(startDate, endDate);
 	}
 
@@ -88,17 +90,19 @@ public class RandomDataDate {
 	 * @param offset
 	 *            随机日期相对当前日期的偏移量
 	 * @return 随机日期
-	 * @throws ParseException
-	 *             日期格式错误
 	 * @since 1.0
 	 */
-	private Date offset(String current, boolean beforeOnly, boolean afterOnly,
-			int... offset) throws ParseException {
+	public Date offset(String current, boolean beforeOnly, boolean afterOnly,
+			int... offset) {
 		Date now = null;
 		if (null == current || "".equals(current)) {
 			now = new Date();
 		} else {
-			now = sdf.parse(current);
+			try {
+				now = sdf.parse(current);
+			} catch (ParseException e) {
+				now = new Date();
+			}
 		}
 		if (beforeOnly && afterOnly) {
 			return now;
@@ -126,9 +130,35 @@ public class RandomDataDate {
 		return randomDate(start.getTime(), end.getTime());
 	}
 
+	/**
+	 * 生成随机日期
+	 * 
+	 * @author zhuwl120820@gxwsxx.com
+	 * @param start
+	 *            开始边界
+	 * @param end
+	 *            截止边界
+	 * @return 随机日期
+	 * @since 1.0
+	 */
 	private Date randomDate(Date start, Date end) {
+		BigDecimal bis = BigDecimal.valueOf(start.getTime());
+		BigDecimal bim = BigDecimal.valueOf(end.getTime()).subtract(bis);
+		if (0 == bim.compareTo(BigDecimal.ZERO)) {
+			return new Date();
+		}
+		BigDecimal bdr = new BigDecimal(Math.random());
+		bdr = bim.multiply(bdr).add(bis);
+		return new Date(bdr.longValue());
+	}
+
+	@Deprecated
+	private Date randomDate1(Date start, Date end) {
 		long b = start.getTime();
 		long m = end.getTime() - b;
+		if (0 == m) {
+			return start;
+		}
 		String r = randomBase("", String.valueOf(m));
 		BigInteger bdr = new BigInteger(r);
 		BigInteger bdm = new BigInteger(String.valueOf(m));
@@ -136,6 +166,18 @@ public class RandomDataDate {
 		return new Date(b + m);
 	}
 
+	/**
+	 * 生成随机值
+	 * 
+	 * @author zhuwl120820@gxwsxx.com
+	 * @param baseLong
+	 *            上级随机值
+	 * @param value
+	 *            随机值最小界限
+	 * @return 随机值
+	 * @since 1.0
+	 */
+	@Deprecated
 	private String randomBase(String baseLong, String value) {
 		BigDecimal bd = BigDecimal.valueOf(Math.random());
 		String r = bd.toString().split("\\.")[1];
