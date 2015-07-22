@@ -8,7 +8,6 @@ public class SqlFileGeneratorTest {
 	public void SqlFileGenerator() {
 		SqlFileGenerator sfg = new SqlFileGenerator("sql.sql");
 		sfg.add(AdTb.class);
-		sfg.add(TbClass.class);
 		sfg.close();
 	}
 }
