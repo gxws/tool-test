@@ -8,7 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 填入随机日期
+ * 填入随机日期的注释
  * 
  * @author zhuwl120820@gxwsxx.com
  * @since 1.0

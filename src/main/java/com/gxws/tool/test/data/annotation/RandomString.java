@@ -38,6 +38,42 @@ public @interface RandomString {
 	public boolean chinese() default false;
 
 	/**
+	 * 是否包含小写字母
+	 * 
+	 * @author zhuwl120820@gxwsxx.com
+	 * @return
+	 * @since 1.0
+	 */
+	public boolean lowers() default true;
+
+	/**
+	 * 是否包含大写字母
+	 * 
+	 * @author zhuwl120820@gxwsxx.com
+	 * @return
+	 * @since 1.0
+	 */
+	public boolean uppers() default false;
+
+	/**
+	 * 是否包含数字
+	 * 
+	 * @author zhuwl120820@gxwsxx.com
+	 * @return
+	 * @since 1.0
+	 */
+	public boolean numbers() default false;
+
+	/**
+	 * 是否包含特殊字符
+	 * 
+	 * @author zhuwl120820@gxwsxx.com
+	 * @return
+	 * @since 1.0
+	 */
+	public boolean marks() default false;
+
+	/**
 	 * 指定随机字符串具有固定前缀
 	 * 
 	 * @author zhuwl120820@gxwsxx.com

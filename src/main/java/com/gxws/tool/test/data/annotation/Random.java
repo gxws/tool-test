@@ -12,10 +12,10 @@ import java.lang.annotation.Target;
  * @since 1.0
  */
 
-@Target(ElementType.FIELD)
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
 public @interface Random {
-
+	public int numberOfTime() default 1;
 }

@@ -14,40 +14,8 @@ import java.util.Date;
  */
 public class RandomDataDate {
 
-	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-
-	// /**
-	// * 获取Date类型的随机日期
-	// *
-	// * @author zhuwl120820@gxwsxx.com
-	// * @return Date类型的随机日期
-	// * @since 1.0
-	// */
-	// public Date getDate(RandomDate ann) {
-	// if (!"".equals(ann.start()) && !"".equals(ann.end())) {
-	// return startend(ann.start(), ann.end());
-	// } else {
-	// try {
-	// return offset(ann.offsetCurrent(), ann.offsetBeforeOnly(),
-	// ann.offsetAfterOnly(), ann.offsetYear(),
-	// ann.offsetMonth(), ann.offsetDay(), ann.offsetHour(),
-	// ann.offsetMinute(), ann.offsetSecond());
-	// } catch (ParseException e) {
-	// return new Date();
-	// }
-	// }
-	// }
-
-	// /**
-	// * 获取String格式的随机日期
-	// *
-	// * @author zhuwl120820@gxwsxx.com
-	// * @return String格式的随机日期
-	// * @since 1.0
-	// */
-	// public String getString(RandomDate ann) {
-	// return sdf.format(getDate(ann));
-	// }
+	public static final SimpleDateFormat FORMAT = new SimpleDateFormat(
+			"yyyy/MM/dd HH:mm:ss");
 
 	/**
 	 * start和end方式获取随机日期
@@ -63,13 +31,13 @@ public class RandomDataDate {
 	public Date startend(String start, String end) {
 		Date startDate;
 		try {
-			startDate = sdf.parse(start);
+			startDate = FORMAT.parse(start);
 		} catch (ParseException e) {
 			startDate = new Date();
 		}
 		Date endDate;
 		try {
-			endDate = sdf.parse(end);
+			endDate = FORMAT.parse(end);
 		} catch (ParseException e) {
 			endDate = new Date();
 		}
@@ -98,7 +66,7 @@ public class RandomDataDate {
 			now = new Date();
 		} else {
 			try {
-				now = sdf.parse(current);
+				now = FORMAT.parse(current);
 			} catch (ParseException e) {
 				now = new Date();
 			}
