@@ -20,7 +20,7 @@ public class SpecificDataCache {
 
 	private final static Logger log = LoggerFactory.getLogger(SpecificDataCache.class);
 
-	private Map<Class<?>, List<Map<String, String>>> classMap;
+	private Map<Class<?>, List<Map<String, String>>> classMap = new HashMap<>();
 
 	private List<Map<String, String>> tempLine;
 
@@ -28,25 +28,28 @@ public class SpecificDataCache {
 
 	private Class<?> tempClass;
 
-	private int order = 0;
-
-	public SpecificDataCache() {
-		classMap = new HashMap<>();
-	}
+	private Map<Class<?>, Integer> orderIndex = new HashMap<>();
 
 	public String get(Class<?> cls, String key, boolean randomOrder) {
 		List<Map<String, String>> classList;
 		try {
 			classList = classList(cls);
-			return keyValue(classList, key, randomOrder);
 		} catch (CacheNotFoundException e) {
-			log.error(e.getMessage(), e);
 			return "";
 		}
-	}
-
-	public void put(Class<?> cls, String key, String value) {
-
+		Map<String, String> keyMap = null;
+		String value = null;
+		if (randomOrder) {
+			keyMap = keyValueRandom(classList);
+		} else {
+			keyMap = keyValueOrder(classList, cls);
+		}
+		value = keyMap.get(key);
+		if (null == value) {
+			return "";
+		} else {
+			return value;
+		}
 	}
 
 	public void prePutInLine(Class<?> cls) {
@@ -78,29 +81,21 @@ public class SpecificDataCache {
 		}
 	}
 
-	private String keyValue(List<Map<String, String>> classList, String key, boolean randomOrder)
-			throws CacheNotFoundException {
-		Map<String, String> keyMap = null;
-		String value = null;
-		if (randomOrder) {
-			int index = (int) (classList.size() * Math.random());
-			keyMap = classList.get(index);
-		} else {
-			if (order >= classList.size()) {
-				order = 0;
-			}
-			keyMap = classList.get(order);
-			order = order + 1;
+	private Map<String, String> keyValueRandom(List<Map<String, String>> classList) {
+		int index = (int) (classList.size() * Math.random());
+		return classList.get(index);
+	}
+
+	private Map<String, String> keyValueOrder(List<Map<String, String>> classList, Class<?> cls) {
+		Integer order = orderIndex.get(cls);
+		if (null == order) {
+			order = Integer.valueOf("0");
+		} else if (order.intValue() >= classList.size()) {
+			order = Integer.valueOf("0");
 		}
-		try {
-			value = keyMap.get(key);
-		} catch (NullPointerException e) {
-			log.error(e.getMessage(), e);
-		}
-		if (null == value) {
-			throw new CacheNotFoundException();
-		} else {
-			return value;
-		}
+		Map<String, String> result = classList.get(order.intValue());
+		order = Integer.valueOf(order.intValue() + 1);
+		orderIndex.put(cls, order);
+		return result;
 	}
 }

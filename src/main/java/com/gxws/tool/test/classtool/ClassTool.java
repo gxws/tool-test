@@ -231,5 +231,5 @@ public class ClassTool {
 	private String specificValue(SpecificCache s) {
 		return sdc.get(s.referenceClass(), s.referenceField(), s.randomOrder());
 	}
-
+	
 }
