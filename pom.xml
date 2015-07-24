@@ -13,6 +13,8 @@
 
 		<!-- test framework -->
 		<version.testng>6.9.4</version.testng>
+
+		<version.tool.common>1.2.0-SNAPSHOT</version.tool.common>
 	</properties>
 	<dependencies>
 
@@ -33,7 +35,11 @@
 			<artifactId>spring-test</artifactId>
 			<version>${version.springframework}</version>
 		</dependency>
-
+		<dependency>
+			<groupId>com.gxws</groupId>
+			<artifactId>tool-common</artifactId>
+			<version>${version.tool.common}</version>
+		</dependency>
 	</dependencies>
 
 	<build>

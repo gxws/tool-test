@@ -8,16 +8,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 随机数据类注解
+ * 需要缓存的值的注解
  * 
  * @author zhuwl120820@gxwsxx.com
  * @since 1.0
  */
-
-@Target(ElementType.TYPE)
+@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-public @interface Random {
-	public int numberOfTime() default 1;
+public @interface RandomCache {
+
 }

@@ -3,14 +3,11 @@ package com.gxws.tool.test.data.generate;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.gxws.tool.test.classtool.RandomClass;
+import com.gxws.tool.test.classtool.ClassTool;
 
 /**
  * 随机数据生成sql文件
@@ -20,13 +17,13 @@ import com.gxws.tool.test.classtool.RandomClass;
  */
 public class SqlFileGenerator {
 
-	private Logger log = LoggerFactory.getLogger(getClass());
+	private final static Logger log = LoggerFactory.getLogger(SqlFileGenerator.class);
 
 	private FileWriter fw;
 
 	private File sqlFile;
 
-	private RandomClass rc = new RandomClass();
+	private ClassTool ct = new ClassTool();
 
 	public SqlFileGenerator(String fileName) {
 		openFile(fileName);
@@ -60,8 +57,11 @@ public class SqlFileGenerator {
 	}
 
 	public void add(Class<?> cls) {
-		int numberOfTime = rc.numberOfTime(cls);
-		String tbName = rc.tbName(cls);
+		int numberOfTime = ct.numberOfTime(cls);
+		if (0 == numberOfTime) {
+			return;
+		}
+		String tbName = ct.tbName(cls);
 		try {
 			fw.write("\n\n/**\n");
 			fw.write(tbName + "\n");
@@ -69,8 +69,9 @@ public class SqlFileGenerator {
 		} catch (IOException e1) {
 			log.error(e1.getMessage(), e1);
 		}
+		String[] kvs = null;
 		for (int i = 0; i < numberOfTime; i++) {
-			String[] kvs = rc.keyvalue(cls);
+			kvs = ct.keyvalue(cls);
 			try {
 				fw.write(line(tbName, kvs[0], kvs[1]));
 			} catch (IOException e) {

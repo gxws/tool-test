@@ -4,13 +4,18 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.gxws.tool.common.uuid.Uuid;
 import com.gxws.tool.test.data.annotation.Random;
+import com.gxws.tool.test.data.annotation.RandomCache;
 import com.gxws.tool.test.data.annotation.RandomDate;
+import com.gxws.tool.test.data.annotation.RandomId;
 import com.gxws.tool.test.data.annotation.RandomNumber;
 import com.gxws.tool.test.data.annotation.RandomString;
+import com.gxws.tool.test.data.annotation.SpecificCache;
 import com.gxws.tool.test.data.random.RandomDataDate;
 import com.gxws.tool.test.data.random.RandomDataNumber;
 import com.gxws.tool.test.data.random.RandomDataString;
+import com.gxws.tool.test.data.specific.SpecificDataCache;
 
 /**
  * 处理类的注解
@@ -18,13 +23,15 @@ import com.gxws.tool.test.data.random.RandomDataString;
  * @author zhuwl120820@gxwsxx.com
  * @since 1.0
  */
-public class RandomClass {
+public class ClassTool {
 
 	private RandomDataString rds = new RandomDataString();
 
 	private RandomDataNumber rdn = new RandomDataNumber();
 
 	private RandomDataDate rdd = new RandomDataDate();
+
+	private SpecificDataCache sdc = new SpecificDataCache();
 
 	/**
 	 * 随机记录条数
@@ -66,14 +73,15 @@ public class RandomClass {
 	 */
 	public String[] keyvalue(Class<?> cls) {
 		Field[] fs = cls.getDeclaredFields();
+		sdc.prePutInLine(cls);
 		StringBuilder ksb = new StringBuilder("`");
 		StringBuilder vsb = new StringBuilder("'");
 		for (Field f : fs) {
 			ksb.append(underline(f.getName()) + "`,`");
 			vsb.append(value(f) + "','");
 		}
-		return new String[] { ksb.substring(0, ksb.length() - 2),
-				vsb.substring(0, vsb.length() - 2) };
+		sdc.donePutInLine();
+		return new String[] { ksb.substring(0, ksb.length() - 2), vsb.substring(0, vsb.length() - 2) };
 	}
 
 	/**
@@ -113,19 +121,32 @@ public class RandomClass {
 	 * @since 1.0
 	 */
 	private String value(Field f) {
+		String value = "";
+		SpecificCache s = f.getAnnotation(SpecificCache.class);
+		if (null != s) {
+			return specificValue(s);
+		}
 		RandomString rs = f.getAnnotation(RandomString.class);
 		if (null != rs) {
-			return stringValue(rs);
+			value = stringValue(rs);
 		}
 		RandomNumber rn = f.getAnnotation(RandomNumber.class);
 		if (null != rn) {
-			return numberValue(rn);
+			value = numberValue(rn);
 		}
 		RandomDate rd = f.getAnnotation(RandomDate.class);
 		if (null != rd) {
-			return dateValue(rd);
+			value = dateValue(rd);
 		}
-		return "";
+		RandomId ri = f.getAnnotation(RandomId.class);
+		if (null != ri) {
+			value = idValue();
+		}
+		RandomCache rc = f.getAnnotation(RandomCache.class);
+		if (null != rc) {
+			sdc.putInLine(f.getName(), value);
+		}
+		return value;
 	}
 
 	/**
@@ -142,10 +163,8 @@ public class RandomClass {
 		if (!"".equals(rd.start()) && !"".equals(rd.end())) {
 			date = rdd.startend(rd.start(), rd.end());
 		} else {
-			date = rdd.offset(rd.offsetCurrent(), rd.offsetBeforeOnly(),
-					rd.offsetAfterOnly(), rd.offsetYear(), rd.offsetMonth(),
-					rd.offsetDay(), rd.offsetHour(), rd.offsetMinute(),
-					rd.offsetSecond());
+			date = rdd.offset(rd.offsetCurrent(), rd.offsetBeforeOnly(), rd.offsetAfterOnly(), rd.offsetYear(),
+					rd.offsetMonth(), rd.offsetDay(), rd.offsetHour(), rd.offsetMinute(), rd.offsetSecond());
 		}
 		return RandomDataDate.FORMAT.format(date);
 	}
@@ -164,8 +183,7 @@ public class RandomClass {
 		if (!"".equals(rn.start()) && !"".equals(rn.end())) {
 			result = rdn.startend(rn.start(), rn.end(), rn.decimalScale());
 		} else {
-			result = rdn.offset(rn.offsetCurrent(), rn.offsetPositive(),
-					rn.offsetNegative(), rn.decimalScale());
+			result = rdn.offset(rn.offsetCurrent(), rn.offsetPositive(), rn.offsetNegative(), rn.decimalScale());
 		}
 		return result.toPlainString();
 	}
@@ -184,11 +202,34 @@ public class RandomClass {
 		if (rs.chinese()) {
 			result.append(rds.chinese(rs.length()));
 		} else {
-			result.append(rds.string(rs.length(), rs.lowers(), rs.uppers(),
-					rs.numbers(), rs.marks()));
+			result.append(rds.string(rs.length(), rs.lowers(), rs.uppers(), rs.numbers(), rs.marks()));
 		}
 		result.append(rs.suffix());
 		return result.toString();
+	}
+
+	/**
+	 * 获取随机id值
+	 * 
+	 * @author zhuwl120820@gxwsxx.com
+	 * @return id值
+	 * @since 1.0
+	 */
+	private String idValue() {
+		return Uuid.order();
+	}
+
+	/**
+	 * 获取指定的缓存值
+	 * 
+	 * @author zhuwl120820@gxwsxx.com
+	 * @param s
+	 *            指定的注解
+	 * @return 指定的缓存值
+	 * @since 1.0
+	 */
+	private String specificValue(SpecificCache s) {
+		return sdc.get(s.referenceClass(), s.referenceField(), s.randomOrder());
 	}
 
 }
